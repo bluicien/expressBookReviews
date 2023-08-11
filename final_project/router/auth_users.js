@@ -51,17 +51,32 @@ regd_users.post("/login", (req,res) => {
 regd_users.put("/auth/review/:isbn", (req, res) => {
     const isbn = req.params.isbn
     const username = req.session.authorization['username']
-    let customerReview = {
-        "username": username,
-        "review": req.query.givereview
-    }
-    if (customerReview) {
-        if (!books[isbn].review.username) {
-            books[isbn].review.push(customerReview)
-            return res.status(200).json({message: "Review posted successfully!"})
+    let customerReview = {[username]: req.query.givereview}
+
+    if (req.query.givereview) {
+        console.log(books[isbn].reviews.username)
+        if (!books[isbn].reviews.username) {
+            Object.assign({books}, {}, {
+                isbn: Object.assign(books[isbn], {}, {
+                    reviews: customerReview
+                })
+            })
+            return res.status(200).json({
+                        message: "Review posted successfully!",
+                        customerReview
+            })
         } else {
-            books[isbn].review.
+            Object.assign({books}, {}, {
+                isbn: Object.assign(books[isbn], {}, {
+                    reviews: customerReview
+                })
+            })
+            return res.status(200).json({
+                        message: "Review posted successfully!",
+                        customerReview
+            })
         }
+        
     } else {
         return res.status(400).json({message: "Please enter a review message"});
     }
