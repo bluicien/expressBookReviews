@@ -54,8 +54,10 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
     let customerReview = {[username]: req.query.givereview}
 
     if (req.query.givereview) {
-        console.log(books[isbn].reviews.username)
-        if (!books[isbn].reviews.username) {
+        let userKey = Object.keys(books[isbn].reviews) 
+        let currentUser = userKey.filter(user => user == username)
+
+        if (!(currentUser.length > 0)) {
             Object.assign({books}, {}, {
                 isbn: Object.assign(books[isbn], {}, {
                     reviews: customerReview
@@ -67,12 +69,14 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
             })
         } else {
             Object.assign({books}, {}, {
-                isbn: Object.assign(books[isbn], {}, {
-                    reviews: customerReview
+                [isbn]: Object.assign(books[isbn], {}, {
+                    reviews: Object.assign(books[isbn].reviews, {}, {
+                        [username]: customerReview[username]
+                    })
                 })
             })
             return res.status(200).json({
-                        message: "Review posted successfully!",
+                        message: "Review updated successfully!",
                         customerReview
             })
         }
@@ -81,6 +85,17 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
         return res.status(400).json({message: "Please enter a review message"});
     }
 });
+
+regd_users.delete("/auth/review/:isbn", (req, res) => {
+    const isbn = req.params.isbn
+    const username = req.session.authorization['username']
+    let deleteReview = req.query.deletereview
+
+
+    let currentUser = userKey.filter(user => user == username)
+
+
+})
 
 module.exports.authenticated = regd_users;
 module.exports.isValid = isValid;
