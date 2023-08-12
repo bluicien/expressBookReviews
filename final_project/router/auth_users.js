@@ -41,7 +41,7 @@ regd_users.post("/login", (req,res) => {
     req.session.authorization = {
         accessToken, username
     }
-    return res.status(200).send("User successfully logged in");
+    return res.status(200).json({message: "User successfully logged in"});
 } else {
     return res.status(401).json({message: "Invalid username or password"});
 }
@@ -51,9 +51,9 @@ regd_users.post("/login", (req,res) => {
 regd_users.put("/auth/review/:isbn", (req, res) => {
     const isbn = req.params.isbn
     const username = req.session.authorization['username']
-    let customerReview = {[username]: req.query.givereview}
+    let customerReview = {[username]: req.query.give_review}
 
-    if (req.query.givereview) {
+    if (req.query.give_review) {
         let userKey = Object.keys(books[isbn].reviews) 
         let currentUser = userKey.filter(user => user == username)
 

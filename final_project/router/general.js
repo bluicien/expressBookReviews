@@ -21,14 +21,14 @@ public_users.post("/register", (req,res) => {
 
 // Get the book list available in the shop
 public_users.get('/',function (req, res) {
-    booksPromise = new Promise((resolve, reject) => {
-        setTimeout(() => {
-            resolve(res.status(200).send(JSON.stringify({books})))
-        }, );
-    })
-    booksPromise.then(() => {
-        console.log("Books retrieved successfully")
-    })
+    const getBooks = async () => {
+        try {
+            res.status(200).json(books)
+            } catch (error) {
+                console.log(error);
+            }
+    }
+    getBooks()
 });
 
         //=============== Alt code ===========//
@@ -48,20 +48,15 @@ public_users.get('/',function (req, res) {
 // Get book details based on ISBN 
 //Using ASYNC function
 public_users.get('/isbn/:isbn',function (req, res) {
-    const findByIsbn = async () => {
-        try {
+    const isbnPromise = new Promise((resolve, reject) => {
+            let num = (req.params.isbn)
             if (books[num]) {
-                let num = (req.params.isbn)
-                const isbnDetails = await books[num]
-                res.status(200).send(JSON.stringify(isbnDetails))
+                resolve(res.status(200).json(books[num]))
             } else {
                 res.status(402).json({message: "ISBN does not exist!"})
             }
-            } catch (error) {
-            console.log(error)
-        }
-    }
-    findByIsbn()
+    })
+    isbnPromise.then(() => console.log("Match found"))
 });
 
 // ===============NON ASYNC CODE ================
@@ -84,14 +79,12 @@ public_users.get('/author/:author',function (req, res) {
                 }
             })
         if (authorMatch) {
-            resolve( res.status(200).send(JSON.stringify(authorMatch)))
+            resolve( res.status(200).json(authorMatch))
         } else {
             return res.status(402).json({message: "No such author found"});
         }
     })
-    authorPromise.then(() => {
-        console.log("Match found")
-    })
+    authorPromise.then(() => console.log("Match found"))
 });
 
 
@@ -106,21 +99,19 @@ public_users.get('/title/:title',function (req, res) {
                 }
             })
         if (titleMatch) {
-            resolve (res.status(200).send(JSON.stringify(titleMatch)))
+            resolve (res.status(200).json(titleMatch))
         } else {
             return res.status(402).json({message: "No such title found"});
         }
     })
-    titlePromise.then(() => {
-        console.log("Match found")
-    })
+    titlePromise.then(() => console.log("Match found"))
 });
 
 //  Get book review
 public_users.get('/review/:isbn',function (req, res) {
     let num = req.params.isbn
     if (books[num]) {
-        res.status(200).send(JSON.stringify(books[num].reviews))
+        res.status(200).json(books[num].reviews)
     } else {
         res.status(402).json({message: "ISBN does not exist!"})
     }
