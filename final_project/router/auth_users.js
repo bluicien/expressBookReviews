@@ -89,12 +89,14 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
 regd_users.delete("/auth/review/:isbn", (req, res) => {
     const isbn = req.params.isbn
     const username = req.session.authorization['username']
-    let deleteReview = req.query.deletereview
-
-
+    let userKey = Object.keys(books[isbn].reviews) 
     let currentUser = userKey.filter(user => user == username)
-
-
+    if (currentUser.length > 0) {
+        delete(books[isbn].reviews[username])
+        res.status(200).json({message: "Review deleted successfully"})
+    } else {
+        return res.status(400).json({message: "Review does not exist"})
+    }
 })
 
 module.exports.authenticated = regd_users;
